@@ -1,0 +1,11 @@
+[Unit]
+Description=Change RGB colors according to temperature
+
+[Service]
+Type=simple
+ExecStart=rgbtemp
+KillMode=process
+KillSignal=SIGUSR1
+
+[Install]
+WantedBy=multi-user.target
