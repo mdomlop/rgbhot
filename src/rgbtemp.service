@@ -2,6 +2,7 @@
 Description=Change RGB colors according to temperature
 
 [Service]
+Environment=RGBTEMP=/path/to/sys/hwmon/temp_input_file
 Type=simple
 ExecStart=rgbtemp
 KillMode=process

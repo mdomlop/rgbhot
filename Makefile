@@ -31,7 +31,7 @@ arch_install_services:
 
 arch_pkg: $(ARCHPKG)
 $(ARCHPKG): PKGBUILD ChangeLog
-	makepkg -d
+	makepkg -fd
 	@echo
 	@echo Package done!
 	@echo You can install it as root with:
