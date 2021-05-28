@@ -5,7 +5,7 @@ _pkgver_month=04
 _pkgver_day=03
 
 pkgname=rgbtemp
-pkgver=0.1
+pkgver=0.3
 pkgrel=1
 pkgdesc='Change RGB colors according to temperature.'
 url='https://github.com/mdomlop/rgbtemp'

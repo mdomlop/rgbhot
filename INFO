@@ -1,7 +1,7 @@
 PROGRAM_NAME=RGB Temperature Monitor
 EXECUTABLE_NAME=rgbtemp
 DESCRIPTION=Change RGB colors according to temperature.
-VERSION=0.2
+VERSION=0.3
 AUTHOR=Manuel Domínguez López
 SOURCE=https://github.com/mdomlop/rgbtemp
 LICENSE=GPL-3
