@@ -12,7 +12,7 @@ url='https://github.com/mdomlop/rgbtemp'
 source=()
 license=('GPL3')
 arch=('any')
-depends=('msi-rgb')
+depends=('openrgb')
 changelog=ChangeLog
 
 build() {

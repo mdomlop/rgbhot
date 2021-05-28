@@ -9,7 +9,7 @@ unsigned int sleep(unsigned int seconds);
 #define FALSE 0
 #define TRUE  1
 
-#define SLEEP 2  /* Sleeping time in seconds */
+#define SLEEP 0.1  /* Sleeping time in seconds */
 
 #define BLACK  "00000000 00000000 00000000" /* off */
 #define WHITE  "FFFFFFFF FFFFFFFF FFFFFFFF" /* >20º */
@@ -28,15 +28,16 @@ int running = TRUE;
 void set_color(int celsius) {
 	/* printf("Los grados son: %i\n", celsius); */
 	int exitstatus = 0;
-	if	  (celsius > 90000)   { exitstatus = system("msi-rgb --base-port 4e --pulse " PINK); }
-	else if (celsius > 80000) { exitstatus = system("msi-rgb --base-port 4e --pulse " RED); }
-	else if (celsius > 70000) { exitstatus = system("msi-rgb --base-port 4e --pulse " ORANGE); }
-	else if (celsius > 60000) { exitstatus = system("msi-rgb --base-port 4e --pulse " YELLOW); }
-	else if (celsius > 50000) { exitstatus = system("msi-rgb --base-port 4e --pulse " GREEN); }
-	else if (celsius > 40000) { exitstatus = system("msi-rgb --base-port 4e --pulse " BLUE); }
-	else if (celsius > 30000) { exitstatus = system("msi-rgb --base-port 4e --pulse " CYAN); }
-	else if (celsius > 20000) { exitstatus = system("msi-rgb --base-port 4e --pulse " WHITE); }
-	else					  { exitstatus = system("msi-rgb --base-port 4e --pulse " BLACK); }
+    char s[50];
+	if	  (celsius >= 90000)   { snprintf(s, 50, "openrgb -c FF00%X", (celsius-90000)*256/10000); exitstatus = system(s); } // PINK
+	else if (celsius >= 80000) { snprintf(s, 50, "openrgb -c FF%X00", (90000-celsius)*64/10000); exitstatus = system(s); } // RED
+	else if (celsius >= 70000) { snprintf(s, 50, "openrgb -c FF%X00", (80000-celsius)*192/10000); exitstatus = system(s); } // ORANGE
+	else if (celsius >= 60000) { snprintf(s, 50, "openrgb -c %XFF00", (celsius-60000)*256/10000); exitstatus = system(s); } // YELLOW
+	else if (celsius >= 50000) { snprintf(s, 50, "openrgb -c 00%X%X", (celsius-50000)*256/10000, (60000-celsius)*256/10000); exitstatus = system(s); } // GREEN
+	else if (celsius >= 40000) { snprintf(s, 50, "openrgb -c 00%XFF", (50000-celsius)*256/10000); exitstatus = system(s); } // BLUE
+	else if (celsius >= 30000) { snprintf(s, 50, "openrgb -c %XFFFF", (40000-celsius)*256/10000); exitstatus = system(s); } // CYAN
+	else if (celsius >= 20000) { exitstatus = system("openrgb -c FFFFFF"); }
+	else					   { exitstatus = system("openrgb -c 000000"); }
 
 	if (exitstatus) running = FALSE;
 }
@@ -115,7 +116,9 @@ int main(int argc, char *argv[]) {
 	/* Reads text until newline is encountered */
 	fscanf_ok = fscanf(fptr, "%[^\n]", c);
 	fclose(fptr);
-
+	
+	system("openrgb -m Static");
+	
 	if (!fscanf_ok) { return 0; }
 
 	i = atoi(c);
@@ -124,7 +127,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* system("msi-rgb --disable --base-port 4e " WHITE);  */
-	cleanexit = system("msi-rgb --base-port 4e " BLACK);  /* No pulsing */
+	cleanexit = system("openrgb -m Off");  /* No pulsing */
 
 	if (cleanexit) { return 1; }
 

@@ -1,6 +1,6 @@
 PREFIX = '/usr'
 DESTDIR = ''
-CFLAGS = -march=native -mtune=native -O2 -ansi -pedantic -Wall
+CFLAGS = -march=native -mtune=native -O2 -ansi -pedantic -Wall -std=c11
 
 
 PROGRAM_NAME := $(shell grep ^PROGRAM_NAME INFO | cut -d= -f2)
