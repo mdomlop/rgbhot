@@ -7,7 +7,8 @@ PROGRAM_NAME := $(shell grep ^PROGRAM_NAME INFO | cut -d= -f2)
 EXECUTABLE_NAME := $(shell grep ^EXECUTABLE_NAME INFO | cut -d= -f2)
 VERSION := $(shell grep ^VERSION INFO | cut -d= -f2)
 
-ARCHPKG = $(EXECUTABLE_NAME)-$(VERSION)-1-any.pkg.tar.xz
+PKGEXT=.pkg.tar.zst
+ARCHPKG = $(EXECUTABLE_NAME)-$(VERSION)-1-any$(PKGEXT)
 
 src/$(EXECUTABLE_NAME):
 
@@ -31,7 +32,7 @@ arch_install_services:
 
 arch_pkg: $(ARCHPKG)
 $(ARCHPKG): PKGBUILD ChangeLog
-	makepkg -fd
+	makepkg -df PKGDEST=./ BUILDDIR=./ PKGEXT='$(PKGEXT)'
 	@echo
 	@echo Package done!
 	@echo You can install it as root with:

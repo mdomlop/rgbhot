@@ -1,0 +1,33 @@
+#!/sbin/openrc-run
+#
+### BEGIN INIT INFO
+# Provides:          rgbtemp
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Change RGB colors with temperature sensor
+### END INIT INFO
+
+#NB: Config is in /etc/conf.d/${RC_SVCNAME}
+
+supervisor="supervise-daemon"
+command=/usr/local/bin/rgbtemp
+command_args="${RGBTEMP}"
+pidfile=/run/${RC_SVCNAME}.pid
+description="Change RGB colors according to temperature"
+
+start_pre() {
+    if [ -z "${RGBTEMP}" ]
+    then
+        eerror "You need to setup RGBTEMP /etc/conf.d/${RC_SVCNAME} first"
+        return 1
+    fi
+}
+
+depend() {
+        #need localmount
+        after sysfs
+        use logger
+}
+

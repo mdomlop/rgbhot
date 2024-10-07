@@ -1,6 +1,6 @@
-![rgbtemp-preview](https://raw.githubusercontent.com/mdomlop/rgbtemp/master/rgbtemp.gif "rgbtemp running")
+![rgbhot-preview](https://raw.githubusercontent.com/mdomlop/rgbhot/master/rgbhot.gif "rgbhot running")
 
-RGB temperature monitor
-=======================
+RGB Hot monitor
+===============
 
 Change RGB colors according to temperature.

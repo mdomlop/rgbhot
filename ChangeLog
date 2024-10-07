@@ -1,6 +1,14 @@
 rgbtemp
 =======
 
+Release 0.3
+-----------
+
+By Manuel <mdomlop@gmail.com> Mon, 07 Oct 2024 12:37:00 +0200
+
+- Name changed to rgbhot.
+- No calls to system() every second.
+
 Release 0.2
 -----------
 

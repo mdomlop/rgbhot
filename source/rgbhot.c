@@ -4,6 +4,16 @@
 #include <signal.h>
 #include <string.h>
 
+#define PROGRAM     "RGBHot"
+#define EXECUTABLE  "rgbhot"
+#define DESCRIPTION "Change RGB colors according to temperature."
+#define VERSION     "0.3"
+#define URL         "https://github.com/mdomlop/rgbhot"
+#define LICENSE     "GPLv3+"
+#define AUTHOR      "Manuel Domínguez López"
+#define NICK        "mdomlop"
+#define MAIL        "zqbzybc@tznvy.pbz"
+
 unsigned int sleep(unsigned int seconds);
 
 #define FALSE 0
@@ -21,24 +31,43 @@ unsigned int sleep(unsigned int seconds);
 #define RED    "FFFFFFFF 00000000 00000000" /* >80º */
 #define PINK   "FFFFFFFF 00000000 FFFFFFFF" /* >90º */
 
+#define CMD "msi-rgb --base-port 4e --pulse "
+
 /* #define DEF_PATH "/sys/class/hwmon/hwmon1/temp3_input" */
 
 int running = TRUE;
+int tstatus = 0;  /* Store values from 0-9
+					   for not repeat system() commands */
 
-void set_color(int celsius) {
+void set_color(const char *color, int tstat)
+{
+	if (tstatus != tstat)
+	{
+		char cmd[58]; /* Command has a fixed size. 57 chars + 1*/
+		strcpy(cmd, CMD);
+		strcat(cmd, color);
+
+		if (system(cmd)) running = FALSE;
+
+		tstatus = tstat;
+	}
+
+
+}
+
+void check_color(int celsius)
+{
 	/* printf("Los grados son: %i\n", celsius); */
-	int exitstatus = 0;
-	if	  (celsius > 90000)   { exitstatus = system("msi-rgb --base-port 4e --pulse " PINK); }
-	else if (celsius > 80000) { exitstatus = system("msi-rgb --base-port 4e --pulse " RED); }
-	else if (celsius > 70000) { exitstatus = system("msi-rgb --base-port 4e --pulse " ORANGE); }
-	else if (celsius > 60000) { exitstatus = system("msi-rgb --base-port 4e --pulse " YELLOW); }
-	else if (celsius > 50000) { exitstatus = system("msi-rgb --base-port 4e --pulse " GREEN); }
-	else if (celsius > 40000) { exitstatus = system("msi-rgb --base-port 4e --pulse " BLUE); }
-	else if (celsius > 30000) { exitstatus = system("msi-rgb --base-port 4e --pulse " CYAN); }
-	else if (celsius > 20000) { exitstatus = system("msi-rgb --base-port 4e --pulse " WHITE); }
-	else					  { exitstatus = system("msi-rgb --base-port 4e --pulse " BLACK); }
+	if      (celsius > 90000) { set_color(PINK,   9); }
+	else if (celsius > 80000) { set_color(RED,    8); }
+	else if (celsius > 70000) { set_color(ORANGE, 7); }
+	else if (celsius > 60000) { set_color(YELLOW, 6); }
+	else if (celsius > 50000) { set_color(GREEN,  5); }
+	else if (celsius > 40000) { set_color(BLUE,   4); }
+	else if (celsius > 30000) { set_color(CYAN,   3); }
+	else if (celsius > 20000) { set_color(WHITE,  2); }
+	else					  { set_color(BLACK,  1); }
 
-	if (exitstatus) running = FALSE;
 }
 
 void sig_handler(int signo)
@@ -70,7 +99,7 @@ int main(int argc, char *argv[]) {
 	char c[8];
 	char fileaddr[255];
 
-	const char* env = getenv("RGBTEMP");
+	const char* env = getenv("RGBHOT");
 
 	FILE *fptr;
 
@@ -80,7 +109,7 @@ int main(int argc, char *argv[]) {
 			if (env != NULL) strcpy(fileaddr, env);
 			else
 			{
-				fprintf(stderr, "RGBTEMP environment variable is empty.\n"
+				fprintf(stderr, "RGBHOT environment variable is empty.\n"
 				"Please, supply a file in such variable or by command line.\n"
 				"Exiting.\n");
 				exit(2);
@@ -107,7 +136,7 @@ int main(int argc, char *argv[]) {
 
 	while (running) {
 	if ((fptr = fopen(fileaddr, "r")) == NULL) {
-		fprintf(stderr, "ERROR: Opening file %s", fileaddr);
+		fprintf(stderr, "ERROR: Opening file %s\n", fileaddr);
 		/* Program exits if file pointer returns NULL. */
 		exit(1);
 	}
@@ -119,7 +148,7 @@ int main(int argc, char *argv[]) {
 	if (!fscanf_ok) { return 0; }
 
 	i = atoi(c);
-	set_color(i);
+	check_color(i);
 	sleep(SLEEP);
 	}
 

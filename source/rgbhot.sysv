@@ -1,0 +1,78 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          rgbheat
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Change RGB colors with temperature sensor
+### END INIT INFO
+
+# Ruta al ejecutable de rgbheat
+DAEMON_BIN=/usr/local/bin/rgbheat
+LOGFILE=/var/log/rgbheat.log
+PIDFILE=/run/rgbheat.pid
+DAEMON=rgbheat
+DESC="RGB colors"
+CONFIG="/etc/rgbheat"
+#DAEMON_OPTS=""
+
+depend() {
+        need localmount
+}
+
+# Función para iniciar el servicio
+start() {
+    echo "Starting $DESC: $DAEMON..."
+    test -f "$CONFIG" && source "$CONFIG"
+    $DAEMON_BIN $RGBTEMP >> $LOGFILE 2>&1 & echo -n $! > $PIDFILE
+}
+
+# Función para detener el servicio
+stop() {
+    echo "Stopping $DESC: $DAEMON..."
+    pkill --pidfile $PIDFILE && rm $PIDFILE
+}
+
+# Función para reiniciar el servicio
+restart() {
+    stop
+    start
+}
+
+# Función para verificar el estado del servicio
+status() {
+    if pgrep -F "$PIDFILE" > /dev/null
+	then
+    	pid=$(cat $PIDFILE)
+	    echo "$DAEMON is running. PID: $pid."
+	    ps -p $pid -o %cpu,%mem
+
+    else
+        echo "$DAEMON is not running."
+    fi
+}
+
+# Evaluamos los argumentos del script
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    status)
+		status
+	;;
+    *)
+        echo "Uso: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+exit 0
+

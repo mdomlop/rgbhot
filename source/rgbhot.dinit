@@ -1,0 +1,5 @@
+type            = process
+command         = /usr/bin/rgbtemp /sys/class/hwmon/hwmon2/temp3_input
+smooth-recovery = true
+logfile         = /var/log/dinit/rgbtemp.log
+waits-for       = loginready
